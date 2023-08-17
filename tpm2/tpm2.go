@@ -1007,6 +1007,10 @@ func ActivateCredential(rw io.ReadWriter, activeHandle, keyHandle tpmutil.Handle
 // given set of authorizations. Two authorization must be provided.
 // Returns decrypted certificate information.
 func ActivateCredentialUsingAuth(rw io.ReadWriter, auth []AuthCommand, activeHandle, keyHandle tpmutil.Handle, credBlob, secret []byte) ([]byte, error) {
+	fmt.Printf("----- BEGIN AUTH COMMAND ------")
+	fmt.Printf("auth command: %+#v", auth)
+	fmt.Printf("----- END AUTH COMMAND ------")
+
 	if len(auth) != 2 {
 		return nil, fmt.Errorf("len(auth) = %d, want 2", len(auth))
 	}
@@ -1839,10 +1843,21 @@ func CertifyCreation(rw io.ReadWriter, objectAuth string, object, signer tpmutil
 }
 
 func runCommand(rw io.ReadWriter, tag tpmutil.Tag, Cmd tpmutil.Command, in ...interface{}) ([]byte, error) {
+	fmt.Printf("----- BEGIN COMMAND ------")
+	fmt.Printf("command: %+#v", Cmd)
+	fmt.Printf("tag: %+#v", tag)
+	fmt.Printf("----- END COMMAND ------")
+
 	resp, code, err := tpmutil.RunCommand(rw, tag, Cmd, in...)
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Printf("----- BEGIN RESPONSE ------")
+	fmt.Printf("response: %+#v", resp)
+	fmt.Printf("code: %+#v", resp)
+	fmt.Printf("----- END RESPONSE ------")
+
 	if code != tpmutil.RCSuccess {
 		return nil, decodeResponse(code)
 	}
